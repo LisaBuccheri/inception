@@ -4,6 +4,9 @@ all: build
 
 build: 
 		@sudo mkdir -p /home/lbuccher/data /home/lbuccher/data/wordpress /home/lbuccher/data/database
+		@sudo chmod 777 /etc/hosts
+		@sudo echo "127.0.0.1 lbuccher.42.fr" >> /etc/hosts
+		@sudo echo "127.0.0.1 www.lbuccher.42.fr" >> /etc/hosts
 		@cd srcs/ && sudo docker-compose up -d --build
 
 status:
