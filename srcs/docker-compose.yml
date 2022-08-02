@@ -1,0 +1,79 @@
+version: "3"
+
+services:
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    image: nginx
+    depends_on:
+      - wordpress
+    ports:
+    #  - 80:80 #local host pour les tests
+      - 443:443
+    networks:
+      - inception
+    volumes:
+      - wordpress-volume:/var/www/wordpress
+    restart: unless-stopped
+  
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    image: mariadb
+    #ports:
+    #  - 3306:3306
+    networks:
+     - inception
+    volumes:
+      - mariadb-volume:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PWD=${MARIADB_ROOT_PWD}
+      - MARIADB_DB=${MARIADB_DB}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PWD=${MARIADB_PWD}
+    restart: unless-stopped
+
+  wordpress:
+    container_name: wordpress
+    build: requirements/wordpress
+    image: wordpress
+    depends_on:
+      - mariadb
+    networks:
+      - inception
+    volumes:
+      - wordpress-volume:/var/www/wordpress
+    environment:
+      - WP_URL=${WP_URL}
+      - WP_DATABASE=${WP_DATABASE}
+      - WP_TITLE=${WP_TITLE}
+      - WP_ADMIN=${WP_ADMIN}
+      - WP_ADMIN_PWD=${WP_ADMIN_PWD}
+      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
+      - WP_USER=${WP_USER}
+      - WP_USER_PWD=${WP_USER_PWD}
+      - WP_USER_EMAIL=${WP_USER_EMAIL}
+      - MARIADB_HOST=${MARIADB_HOST}
+      - MARIADB_DB=${MARIADB_DB}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PWD=${MARIADB_PWD}
+    restart: unless-stopped
+
+
+volumes:
+  mariadb-volume:
+    driver: local
+    driver_opts:
+      type: volume
+      device: /home/lbuccher/data/database
+      o: bind
+  wordpress-volume:
+    driver: local
+    driver_opts: 
+      type: volume
+      device: /home/lbuccher/data/wordpress
+      o: bind
+
+networks:
+  inception:
+    driver: bridge
