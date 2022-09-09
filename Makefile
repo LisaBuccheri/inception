@@ -13,7 +13,7 @@ status:
 		@cd srcs/ && sudo docker-compose ps
 
 up: 
-		@cd srcs/ && sudo docker-compose up
+		@cd srcs/ && sudo docker-compose up -d
 
 down: 
 		@cd srcs/ && sudo docker-compose down
